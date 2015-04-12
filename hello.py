@@ -1,7 +1,10 @@
 import os
 from flask import Flask, render_template, jsonify, request
 
-import get_messages
+import get_messages, email
+
+from sets import Set
+
 
 app = Flask(__name__)
 
@@ -21,8 +24,6 @@ def refresh():
 
 	sort_lst()
 
-
-
 refresh()
 
 @app.route('/')
@@ -34,3 +35,15 @@ def hello():
 def data():
 	refresh()
 	return jsonify(result=[item.serialize() for item in lst_of_messages])
+
+
+def keywordCheck():
+	keywords = Set(["suicide", "hopelessness", "cyanide", "self-harm", "kill-myself"  ]); #alert keywords
+	keywords2 = Set(['sad', 'depressed', 'depression', 'heartbroken','mournful','pessimistic','somber','down','cheerless','dejected','truobled','unhappy','pain']) #sad keywords
+
+	for message in messages:
+	    for word in message.message.split(' '):
+	        if word.lower() in keywords: email.alert()
+	        if word.lower() in keywords2: email.sad()
+
+keywordCheck();
