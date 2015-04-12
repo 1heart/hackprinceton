@@ -43,6 +43,7 @@ api_key = "ad828e5b5cde7780b7181ac8f6ad4f36"
 indicoio.config.api_key = api_key
 
 def sentiment_get(text):
+	return 0.5
 	return indicoio.sentiment(text)
 
 

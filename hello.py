@@ -1,7 +1,7 @@
 import os, arduino, time, datetime, Queue
 from flask import Flask, render_template, jsonify, request
 
-import get_messages, email
+import get_messages, send_email
 
 from sets import Set
 
@@ -66,8 +66,8 @@ def keywordCheck():
 
 	for message in messages:
 	    for word in message.message.split(' '):
-	        if word.lower() in keywords: email.alert()
-	        if word.lower() in keywords2: email.sad()
+	        if word.lower() in keywords: send_email.alert()
+	        if word.lower() in keywords2: send_email.sad()
 
 keywordCheck();
 

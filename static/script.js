@@ -6,7 +6,6 @@ $(document).ready(function() {
 		$("#refesh_btn").hide("fast");
 		$.getJSON($SCRIPT_ROOT + '/get_data', {
 		}, function(data) {
-			console.log("lol");
 			$("#refresh_body").empty();
 
 
