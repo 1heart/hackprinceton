@@ -17,4 +17,3 @@ requests==2.6.0
 requests-oauthlib==0.4.2
 twitter==1.16.0
 Werkzeug==0.10.4
-IndicoIo==0.5.2
