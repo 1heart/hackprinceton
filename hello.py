@@ -10,7 +10,10 @@ app = Flask(__name__)
 
 app.debug = True
 
-
+TWITTER_NAME = "valar1234"
+GMAIL_ADDRESS = "sentimentalprinceton@gmail.com"
+GMAIL_PASSWORD = "hack123hack"
+GMAIL_INBOX = "[Gmail]/Sent Mail"
 
 
 
@@ -26,9 +29,9 @@ def sort_lst(lst):
 	return sorted(lst, key = lambda x: x.time_object)
 
 def refresh(lst_of_messages):
-	tweet_messages = get_messages.twitter_get("valar1234")
+	tweet_messages = get_messages.twitter_get(TWITTER_NAME)
 	lst_of_messages += [message_object for message_object in tweet_messages if message_object not in lst_of_messages]
-	email_messages = get_messages.gmail_get("sentimentalprinceton@gmail.com", "hack123hack", "[Gmail]/Sent Mail")
+	email_messages = get_messages.gmail_get(GMAIL_ADDRESS, GMAIL_PASSWORD, GMAIL_INBOX)
 	lst_of_messages += [message_object for message_object in email_messages if message_object not in lst_of_messages]
 	lst_of_messages = sort_lst(lst_of_messages)
 	return lst_of_messages
