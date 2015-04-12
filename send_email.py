@@ -6,7 +6,7 @@ def alert():
 def sad():
    sendEmail("The following automatic message was sent from HeartBeat. \n It appears that your friend is feeling sad, we''re sure a call or visit from you would help!")
 
-def sendEmail(message):
+def sendEmail(text):
     fromaddr = 'helpme@gmail.com'
     toaddrs  = 'sentimentalprinceton@gmail.com'
 
@@ -14,6 +14,21 @@ def sendEmail(message):
     # Credentials (if needed)
     username = 'sentimentalprinceton@gmail.com'
     password = 'hack123hack'
+
+
+    TO = ["sentimentalprinceton@gmail.com"] # must be a list
+
+    SUBJECT = "A friend needs your help! "
+
+    # Prepare actual message
+
+    message = """\
+    From: %s
+    To: %s
+    Subject: %s
+
+    %s
+    """ % (fromaddr, ", ".join(TO), SUBJECT, text)
 
     # The actual mail send
     server = smtplib.SMTP('smtp.gmail.com:587')
