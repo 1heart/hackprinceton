@@ -1,6 +1,34 @@
+# These are the objects that store the message.
+
+import datetime, time
+
+class Message:
+	def __init__(self, message, time_object, source):
+		self.message = message
+		self.time_object = time_object
+		self.source = source
+		self.sentiment = sentiment_get(message)
+	def __repr__(self):
+		return "MESSAGE: " + self.message + " SENTIMENT: " + str(self.sentiment) + " DATE: " + str(self.time_object)
+	def __str__(self):
+		return repr(self)
+	def __eq__(self, other):
+		if isinstance(other, self.__class__):
+			return self.message == other.message and str(self.time_object) == str(other.time_object)
+		else:
+			return False
+
 """
 	This contains the functions that get the last post/tweet/email.
 """
+
+# CONSTANTS
+
+# Number of tweets to get each time
+NUMBER_OF_TWEETS = 10
+
+
+
 
 # Indico sentiment analysis
 
@@ -26,12 +54,13 @@ asecret = '6BH1JYDSrQjGke6FpkRpg7iHzrRmA4qljhuhr2kK3E3MG'
 auth = twitter.OAuth(atoken, asecret, ckey, csecret)
 t = twitter.Twitter(auth=auth)
 
-
 def twitter_get(username):
-	user = t.statuses.user_timeline(screen_name=username, count=1)
-	return user[0]['text']
+	user = t.statuses.user_timeline(screen_name=username, count=NUMBER_OF_TWEETS)
+	return [Message(user[i]['text'], twitter_date_from_tweet(user[i]), "Twitter") for i in range(len(user))]
 
 
+def twitter_date_from_tweet(tweet):
+	return time.strptime(tweet['created_at'],'%a %b %d %H:%M:%S +0000 %Y')
 
 # Gmail
 
@@ -81,6 +110,7 @@ def process_mailbox(M):
             return
 
         msg = email.message_from_string(data[0][1])
+        email_date_from_email(msg)
         #print msg
 
         if msg.get_content_maintype() == 'multipart': #If message is multi part we only want the text version of the body, this walks the message and gets the body.
@@ -94,6 +124,12 @@ def process_mailbox(M):
         decode = email.header.decode_header(msg['Subject'])[0]
         subject = unicode(decode[0])
         # print 'Message %s: %s' % (num, subject)
-        list_of_messages.append(body)
+        list_of_messages.append(Message(body, email_date_from_email(msg), "Gmail"))
     
     return list_of_messages
+
+def email_date_from_email(msg):
+	date_tuple = email.utils.parsedate_tz(msg['Date'])
+	datetime_object = datetime.datetime.fromtimestamp(email.utils.mktime_tz(date_tuple))
+	time_object = time.mktime(datetime_object.timetuple())
+	return time_object
