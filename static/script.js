@@ -32,8 +32,28 @@ $("#down-button-2").click(function() {
 		scrollTop: $("#container-two").offset().top
 	}, 1000);
 });
-$("#down-button-3").click(function() {
+$("#submit-button").click(function() {
 	$('html, body').animate({
 		scrollTop: $("#container-three").offset().top
 	}, 1000);
 });
+
+$("#input_form").submit(function() {
+	event.preventDefault();
+	var currentEmail = $("input:first").val();
+	var currentEmailPassword = $("#pw").val();
+	var currentTwitterAccount = $("#tw").val();
+	console.log(currentEmail);
+	if (IsEmail(currentEmail)) {
+		emailRef.push({email: currentEmail, password: currentEmailPassword, twitter: currentTwitterAccount});
+		alert("Success!");
+	}
+	else {
+		alert("Invalid email.");
+	}
+});
+
+function IsEmail(email) {
+  var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+  return regex.test(email);
+}

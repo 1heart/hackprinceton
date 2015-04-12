@@ -53,7 +53,12 @@ def data():
 	push_to_arduino()
 	return jsonify(result=[item.serialize() for item in lst_of_messages])
 
-
+@app.route('/input_info')
+def input():
+	input_email_address = requests.args.get('email_address', 0, type=str)
+	input_email_password = requests.args.get('email_password', 0, type=str)
+	input_twitter_username = requests.args.get('twitter_username', 0, type=str)
+	return jsonify(result="Success")
 
 def keywordCheck():
 	keywords = Set(["suicide", "hopelessness", "cyanide", "self-harm", "kill-myself"  ]); #alert keywords
