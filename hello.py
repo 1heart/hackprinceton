@@ -42,34 +42,51 @@ lst_of_messages = refresh(lst_of_messages)
 @app.route('/')
 def hello():
 	# return str(lst_of_messages)
+	arduino.clear()
 	return render_template('index.html')
 
 
 
 @app.route('/get_data')
 def data():
+	print(GMAIL_ADDRESS, GMAIL_PASSWORD, TWITTER_NAME)
+
+	keywordCheck();
+	
 	global lst_of_messages
 	lst_of_messages = refresh(lst_of_messages)
 	push_to_arduino()
 	return jsonify(result=[item.serialize() for item in lst_of_messages])
 
-@app.route('/input_info')
+@app.route('/input_info', methods=['POST'])
 def input():
-	input_email_address = requests.args.get('email_address', 0, type=str)
-	input_email_password = requests.args.get('email_password', 0, type=str)
-	input_twitter_username = requests.args.get('twitter_username', 0, type=str)
+	global TWITTER_NAME
+	global GMAIL_ADDRESS
+	global GMAIL_PASSWORD
+	GMAIL_ADDRESS = request.args.get('email_address', 0, type=str)
+	GMAIL_PASSWORD = request.args.get('email_password', 0, type=str)
+	TWITTER_NAME = request.args.get('twitter_username', 0, type=str)
+	print(GMAIL_ADDRESS, GMAIL_PASSWORD, TWITTER_NAME)
 	return jsonify(result="Success")
 
 def keywordCheck():
 	keywords = Set(["suicide", "hopelessness", "cyanide", "self-harm", "kill-myself"  ]); #alert keywords
 	keywords2 = Set(['sad', 'depressed', 'depression', 'heartbroken','mournful','pessimistic','somber','down','cheerless','dejected','truobled','unhappy','pain']) #sad keywords
 
+	emailSent = False
+
 	for message in lst_of_messages:
 	    for word in message.message.split(' '):
-	        if word.lower() in keywords: send_email.alert()
-	        if word.lower() in keywords2: send_email.sad()
+	        if word.lower() in keywords:
+	        	send_email.alert()
+	        	emailSent = True
+	        if word.lower() in keywords2:
+	        	send_email.sad()
+	        	emailSent = True
+	if emailSent:
+		print "We just sent an email"
 
-keywordCheck();
+
 
 def push_to_arduino():
 	global lst_of_messages

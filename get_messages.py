@@ -36,15 +36,44 @@ NUMBER_OF_TWEETS = 10
 
 # Indico sentiment analysis
 
-import indicoio
+import indicoio, json
 
 api_key = "ad828e5b5cde7780b7181ac8f6ad4f36"
 
 indicoio.config.api_key = api_key
 
+# Second sentiment analysis API
+
+import urllib, urllib2
+
+url = "http://text-processing.com/api/sentiment/"
+
 def sentiment_get(text):
-	return 0.5
-	return indicoio.sentiment(text)
+	# return 0.5
+	# return indicoio.sentiment(text)
+	# print(text)
+	if text=='':
+		return 1
+	values = {'text': text}
+	data = urllib.urlencode(values)
+	req = urllib2.Request(url, data)
+	print(values)
+	response = urllib2.urlopen(req)
+	the_page = json.loads(response.read())
+	return the_page['probability']['pos']
+
+
+
+
+
+# values = {'name' : 'Michael Foord',
+#           'location' : 'Northampton',
+#           'language' : 'Python' }
+
+# data = urllib.urlencode(values)
+# req = urllib2.Request(url, data)
+# response = urllib2.urlopen(req)
+# the_page = response.read()
 
 
 # Twitter
@@ -78,6 +107,7 @@ def gmail_get(username, password, folder):
 	Returns a list of messages.
 	"""
 	M = imaplib.IMAP4_SSL('imap.gmail.com')
+	print("get", username, password)
 	try:
 	    rv, data = M.login(username, password)
 	except imaplib.IMAP4.error:
@@ -123,9 +153,10 @@ def process_mailbox(M):
                 if part.get_content_type() == "text/plain":
                     body = part.get_payload(decode=True)
                 else:
-                            continue
-
-
+                	body = " "
+                	continue
+        else:
+        	body = " "
         decode = email.header.decode_header(msg['Subject'])[0]
         subject = unicode(decode[0])
         # print 'Message %s: %s' % (num, subject)
