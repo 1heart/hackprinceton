@@ -55,9 +55,13 @@ def push_to_arduino():
 	global sent_objects
 	for item in lst_of_messages:
 		if item not in sent_objects:
-			arduino.send_to_arduino(item.sentiment)
-			sent_objects.add(item)
-		time.sleep(9)
+			print(item.sentiment)
+			try:
+				arduino.send_to_arduino(item.sentiment)
+				sent_objects.add(item)
+				
+			except:
+				pass
 	# sentiments = [obj.sentiment for obj in lst_of_messages]
 	# for sentiment in sentiments:
 	# 	print(sentiment)
