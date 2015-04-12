@@ -14,13 +14,13 @@ void setup() {
     Serial.begin(9600);     // opens serial port, sets data rate to 9600 bps
 }
 
+/*
+* Clear history and turn off all pixels. 
+*/
 void reset(){ 
   memset(history, 0, sizeof(history));
-  
   for (int i = 0; i<=59; i++) strip.setPixelColor(i,0,0,0); 
   strip.show(); 
-
-  
 }
 
 void loop() {
@@ -29,9 +29,7 @@ void loop() {
       x = Serial.parseFloat();
       Serial.println(x); 
       if (x == 9.0) reset(); 
-
-      else if (x != 0) addColor(x); 
-      
+      else if (x != 0) addColor(x);      
   }
 }
 
@@ -121,16 +119,15 @@ void recoverPixel(int i){
   //float x = history[(int)(i/WIDTH)];
   
   //Serial.println(x); 
-  delay(25);
-//   if (x == 0) strip.setPixelColor(i, 0,0,0); 
-//   else if (x < .3) strip.setPixelColor(i, 255,50,0); 
-//   else if (x < .6) strip.setPixelColor(i, 0,100,255);
-//   else strip.setPixelColor(i, 10,255,0);
-
-
-    strip.setPixelColor(i, history[(int)(i/WIDTH)]); 
-   strip.show(); 
-  
+//  delay(25);
+//   strip.setPixelColor(i, history[(int)(i/WIDTH)]); 
+//   strip.show(); 
+   uint32_t c =  history[(int)(i/WIDTH)];
+      uint8_t
+      r = (uint8_t)(c >> 16),
+      g = (uint8_t)(c >>  8),
+      b = (uint8_t)c; 
+   fadeToColor(i, r, g, b);  
 }
 
 void blue(int sediment) { 
@@ -166,16 +163,12 @@ void red(int sediment) {
     for(i=0; i<strip.numPixels(); i++) {
       strip.setPixelColor(i, Wheel((i+j) & 255));
     }
-    strip.show();
-    delay(20);
-  }
+        strip.show();
+      delay(20);
+}
 }
 
 void green(int sediment) { 
-//  for (int i=0; i<=59; i++) { 
-//    strip.setPixelColor(i, 0,255, 0); 
-//  }
-//  strip.show(); 
 
   uint16_t i, j;
   int limit = 190 + (sediment*3);
@@ -203,4 +196,29 @@ uint32_t Wheel(byte WheelPos) {
    WheelPos -= 170;
    return strip.Color(0, WheelPos * 3, 255 - WheelPos * 3);
   }
+}
+
+
+/*
+* Slowly fade a particular pixel to an end color
+* @param i index of pixel to change
+*/
+void fadeToColor(int i,  int Rend, int Gend, int Bend) { 
+  uint32_t c = strip.getPixelColor(i); 
+   uint8_t
+      r = (uint8_t)(c >> 16),
+      g = (uint8_t)(c >>  8),
+      b = (uint8_t)c;
+      
+   int n = 15; 
+   int Rnew, Gnew, Bnew; 
+   for(int j = 0; j < n; j++) {
+     Rnew = r + (Rend - r) * j / n;
+     Gnew = g + (Gend - g) * j / n;
+     Bnew = b + (Bend - b) * j / n;
+     
+     strip.setPixelColor(i, strip.Color(Rnew, Gnew, Bnew)); 
+     strip.show();
+     delay(1); 
+    }
 }
