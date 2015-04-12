@@ -17,6 +17,8 @@ class Message:
 			return self.message == other.message and str(self.time_object) == str(other.time_object)
 		else:
 			return False
+	def __hash__(self):
+		return hash(self.message + str(self.time_object) + str(self.sentiment) + str(self.source))
 	def serialize(self):
 		return {'message': self.message, 'date': str(self.time_object), 'sentiment': str(self.sentiment), 'source': self.source, 'string': str(self)}
 
