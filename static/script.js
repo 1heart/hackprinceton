@@ -46,11 +46,23 @@ $("#input_form").submit(function() {
 	console.log(currentEmail);
 	if (IsEmail(currentEmail)) {
 		emailRef.push({email: currentEmail, password: currentEmailPassword, twitter: currentTwitterAccount});
-		alert("Success!");
+		$.ajax({
+		  method: "POST",
+		  url: $SCRIPT_ROOT + "/input_info",
+		  data: { 'email_address': currentEmail, 'email_password': currentEmailPassword, 'twitter_username': currentTwitterAccount })
+
+		  .done(function( msg ) {
+		    alert("Success!");
+		  }),
+
+		  .error(function(err){
+		  	alert("Nope")
+		  });
 	}
 	else {
 		alert("Invalid email.");
 	}
+
 });
 
 function IsEmail(email) {
