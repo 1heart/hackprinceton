@@ -12,15 +12,15 @@ void setup() {
     strip.begin();
     strip.show(); // Initialize all pixels to 'off'
     Serial.begin(9600);     // opens serial port, sets data rate to 9600 bps
+}
 
-//    history[0] = .2;
-//    history[1] = .4;
-//    history[2] = .6;  
-//    updateHistory(history); 
-//    
-//    addColor(.2);
-//    addColor(.9);
+void reset(){ 
+  memset(history, 0, sizeof(history));
+  
+  for (int i = 0; i<=59; i++) strip.setPixelColor(i,0,0,0); 
+  strip.show(); 
 
+  
 }
 
 void loop() {
@@ -28,7 +28,10 @@ void loop() {
   if(Serial.available() ) {
       x = Serial.parseFloat();
       Serial.println(x); 
-      addColor(x); 
+      if (x == 9.0) reset(); 
+
+      else if (x != 0) addColor(x); 
+      
   }
 }
 
@@ -73,13 +76,21 @@ void updateHistory(float history[]){
    
 
    //1
-   if (sentiment < .3) red(); 
+   if (sentiment < .3) { 
+      int sediment = ((sentiment)/.3)*10+1;
+
+     red(sediment); 
+   }
    else if (sentiment < .6) {
      int sediment = ((sentiment-.3)/.3)*10+1;
      Serial.println(sediment); 
      blue(sediment); 
    }
-   else green(); 
+   else{ 
+      int sediment = ((sentiment-.6)/.6)*10+1;
+
+     green(sediment); 
+   }
    
      delay(1000); 
    //2 Recover Pixels
@@ -94,7 +105,7 @@ void updateHistory(float history[]){
      strip.setPixelColor(i,0,0,0); 
      strip.setPixelColor(i-WIDTH, strip.getPixelColor(i-1)); 
      strip.show(); 
-     delay(35);
+     delay(25);
    }
    
 
@@ -107,14 +118,17 @@ void updateHistory(float history[]){
     
 // Uses the history to recover the color of the ith pixel
 void recoverPixel(int i){ 
-  float x = history[(int)(i/WIDTH)];
+  //float x = history[(int)(i/WIDTH)];
   
   //Serial.println(x); 
-  delay(35);
-   if (x == 0) strip.setPixelColor(i, 0,0,0); 
-   else if (x < .3) strip.setPixelColor(i, 255,50,0); 
-   else if (x < .6) strip.setPixelColor(i, 0,100,255);
-   else strip.setPixelColor(i, 10,255,0);
+  delay(25);
+//   if (x == 0) strip.setPixelColor(i, 0,0,0); 
+//   else if (x < .3) strip.setPixelColor(i, 255,50,0); 
+//   else if (x < .6) strip.setPixelColor(i, 0,100,255);
+//   else strip.setPixelColor(i, 10,255,0);
+
+
+    strip.setPixelColor(i, history[(int)(i/WIDTH)]); 
    strip.show(); 
   
 }
@@ -137,23 +151,42 @@ void blue(int sediment) {
   }
 }
 
-void red() {
-  for (int j = 0; j<=255; j++) { 
-      for (int i=0; i<=59; i++) { 
-        strip.setPixelColor(i, j,0, 0); 
-      }
-      strip.show(); 
-      delay(1);
-    
+void red(int sediment) {
+//  for (int j = 0; j<=255; j++) { 
+//      for (int i=0; i<=59; i++) { 
+//        strip.setPixelColor(i, j,0, 0); 
+//      }
+//      strip.show(); 
+//      delay(1); 
+//  }
+  uint16_t i, j;
+  int limit = 30 + (sediment*5);
+  for(j=25; j< limit; j++) {
+    //Serial.println(j); 
+    for(i=0; i<strip.numPixels(); i++) {
+      strip.setPixelColor(i, Wheel((i+j) & 255));
+    }
+    strip.show();
+    delay(20);
   }
-
 }
 
-void green() { 
-  for (int i=0; i<=59; i++) { 
-    strip.setPixelColor(i, 0,255, 0); 
+void green(int sediment) { 
+//  for (int i=0; i<=59; i++) { 
+//    strip.setPixelColor(i, 0,255, 0); 
+//  }
+//  strip.show(); 
+
+  uint16_t i, j;
+  int limit = 190 + (sediment*3);
+  for(j=180; j< limit; j++) {
+    //Serial.println(j); 
+    for(i=0; i<strip.numPixels(); i++) {
+      strip.setPixelColor(i, Wheel((i+j) & 255));
+    }
+    strip.show();
+    delay(20);
   }
-  strip.show(); 
 }
 
 
