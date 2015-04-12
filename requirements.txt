@@ -1,7 +1,6 @@
 decorator==3.4.2
 Flask==0.10.1
 gunicorn==19.3.0
-IndicoIo==0.5.2
 itsdangerous==0.24
 Jinja2==2.7.3
 MarkupSafe==0.23
@@ -23,3 +22,4 @@ scipy==0.15.1
 six==1.9.0
 twitter==1.16.0
 Werkzeug==0.10.4
+IndicoIo==0.5.2
