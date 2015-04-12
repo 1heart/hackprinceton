@@ -68,9 +68,10 @@ void updateHistory(float history[]){
  
  //Given the sentiment of a message, adds the color to the strip
  void addColor(float sentiment){ 
-   //First set color of entire strip to sentiment color
-   //Then one by one (starting from beginenning, recover color of segments
-   //When there are WIDTH pixels left, animated those into the strip, joining the rest
+   // First set color of entire strip to sentiment color
+   // Then one by one (starting from beginenning, recover color of segments
+   // When there are WIDTH pixels left, animated those into the strip, joining the rest
+   // After smooth out the lines 
    
 
    //1
@@ -106,6 +107,41 @@ void updateHistory(float history[]){
      delay(25);
    }
    
+   
+   delay(10);
+   //4 Blend it together
+   float blend = .6; 
+   for (int i = WIDTH-1; i <=59-WIDTH; i+=WIDTH) { 
+     uint32_t c1= strip.getPixelColor(i); 
+     uint32_t c2 = strip.getPixelColor(i+1);
+     
+      uint8_t
+      r1 = (uint8_t)(c1 >> 16),
+      g1 = (uint8_t)(c1 >>  8),
+      b1 = (uint8_t)c1; 
+      
+      uint8_t
+      r2 = (uint8_t)(c2 >> 16),
+      g2 = (uint8_t)(c2 >>  8),
+      b2 = (uint8_t)c2; 
+      
+      
+     if (r2 == 0 && g2 ==0 && b2== 0)break;  
+
+      int newR1, newG1, newB1,newR2, newG2, newB2; 
+      
+      newR1 = (r1*blend) + (r2*(1-blend)); 
+      newG1 = (g1*blend) + (g2*(1-blend)); 
+      newB1 = (b1*blend) + (b2*(1-blend)); 
+      fadeToColor(i, newR1, newG1, newB1); 
+
+      newR2 = (r2*blend) + (r1*(1-blend)); 
+      newG2 = (g2*blend) + (g1*(1-blend)); 
+      newB2 = (b2*blend) + (b1*(1-blend));
+      
+      fadeToColor(i+1, newR2, newG2, newB2); 
+      
+   }
 
    currentSegment++;
   delay(1000); 
