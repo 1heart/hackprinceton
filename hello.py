@@ -13,14 +13,6 @@ app.debug = True
 
 
 
-@app.route('/')
-def hello():
-	global lst_of_messages
-	get_current_time()
-	return render_template('index.html')
-
-
-
 
 lst_of_messages = []
 sent_objects = set()
@@ -39,10 +31,10 @@ def refresh(lst_of_messages):
 	email_messages = get_messages.gmail_get("sentimentalprinceton@gmail.com", "hack123hack", "[Gmail]/Sent Mail")
 	lst_of_messages += [message_object for message_object in email_messages if message_object not in lst_of_messages]
 	lst_of_messages = sort_lst(lst_of_messages)
+	return lst_of_messages
 
-	sort_lst()
 
-refresh()
+lst_of_messages = refresh(lst_of_messages)
 
 @app.route('/')
 def hello():
@@ -64,7 +56,7 @@ def keywordCheck():
 	keywords = Set(["suicide", "hopelessness", "cyanide", "self-harm", "kill-myself"  ]); #alert keywords
 	keywords2 = Set(['sad', 'depressed', 'depression', 'heartbroken','mournful','pessimistic','somber','down','cheerless','dejected','truobled','unhappy','pain']) #sad keywords
 
-	for message in messages:
+	for message in lst_of_messages:
 	    for word in message.message.split(' '):
 	        if word.lower() in keywords: send_email.alert()
 	        if word.lower() in keywords2: send_email.sad()

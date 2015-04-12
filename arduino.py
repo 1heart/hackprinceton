@@ -1,7 +1,10 @@
 # Python arduino interface
 import serial, time
 
-ser = serial.Serial('/dev/tty.usbmodem621', 9600)
+try:
+	ser = serial.Serial('/dev/tty.usbmodem621', 9600)
+except:
+	pass
 # while True:
 #     print ser.readline();
 
