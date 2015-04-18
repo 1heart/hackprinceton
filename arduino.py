@@ -20,7 +20,7 @@ def send_to_arduino(number):
 		string_number = "0.1"
 	print "I'm sending to arduino ", string_number
 	ser.write(string_number)
-	# time.sleep(9)
+	time.sleep(7)
 
 def clear():
 	ser.write("9.0")
